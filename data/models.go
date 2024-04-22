@@ -73,7 +73,8 @@ func (l *LogEntry) All() ([]*LogEntry, error) {
 
 		err := cursor.Decode(&item)
 		if err != nil {
-			log.Println("Error decoding log into slice:", err)
+			log.Print("Error decoding log into slice:", err)
+			return nil, err
 		} else {
 			logs = append(logs, &item)
 		}
@@ -128,12 +129,12 @@ func (l *LogEntry) Update() (*mongo.UpdateResult, error) {
 
 	result, err := collection.UpdateOne(
 		ctx,
-		bson.M("_id", docID),
+		bson.M{"_id": docID},
 		bson.D{
 			{"$set", bson.D{
-				{"name": l.Name},
-				{"data": l.Data},
-				{"updated_at": time.Now()},
+				{"name", l.Name},
+				{"data", l.Data},
+				{"updated_at", time.Now()},
 			}},
 		},
 	)
@@ -143,5 +144,4 @@ func (l *LogEntry) Update() (*mongo.UpdateResult, error) {
 	}
 
 	return result, nil
-
 }
